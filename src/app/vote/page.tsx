@@ -36,6 +36,7 @@ export default function VotePage() {
   const [submittingVote, setSubmittingVote] = useState(false);
   const [submittedReceipt, setSubmittedReceipt] = useState<any>(null);
   const [voteError, setVoteError] = useState("");
+  const [verificationMethod, setVerificationMethod] = useState<"camera_simulated" | "alternative_passphrase" | null>(null);
 
   useEffect(() => {
     // 1. Check voter status
@@ -67,6 +68,7 @@ export default function VotePage() {
 
   const handleSelectParty = (party: Party) => {
     setSelectedParty(party);
+    setVerificationMethod(null);
     setVoteError("");
   };
 
@@ -77,6 +79,11 @@ export default function VotePage() {
 
   const handleVerificationCompleted = async (method: "camera_simulated" | "alternative_passphrase") => {
     setScannerOpen(false);
+    setVerificationMethod(method);
+  };
+
+  const handleSubmitDemoVote = async () => {
+    if (!selectedParty || !verificationMethod) return;
     setSubmittingVote(true);
     setVoteError("");
 
@@ -85,8 +92,8 @@ export default function VotePage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          partyId: selectedParty!.id,
-          verificationMethod: method,
+          partyId: selectedParty.id,
+          verificationMethod,
         }),
       });
 
@@ -124,7 +131,7 @@ export default function VotePage() {
           <div className="space-y-2">
             <h2 className="text-2xl font-extrabold text-white">Demonstration Vote Cast!</h2>
             <p className="text-xs text-slate-300">
-              Your demonstration vote has been submitted successfully and recorded anonymously.
+              Your demonstration vote has been submitted successfully. Account participation and party counts are stored separately in this prototype; this is not a certified secret ballot.
             </p>
           </div>
 
@@ -135,7 +142,7 @@ export default function VotePage() {
             </div>
             <div className="flex justify-between text-slate-400">
               <span>Status:</span>
-              <span className="text-emerald-400 font-semibold">Anonymously Decoupled</span>
+              <span className="text-emerald-400 font-semibold">Demo record created</span>
             </div>
           </div>
 
@@ -178,6 +185,35 @@ export default function VotePage() {
     );
   }
 
+  if (verificationMethod && selectedParty) {
+    return (
+      <div className="flex-1 flex items-center justify-center p-4">
+        <section aria-labelledby="confirm-vote-title" className="w-full max-w-lg rounded-2xl border border-cyan-500/30 bg-[#0b101b] p-7 sm:p-9 space-y-6 shadow-2xl shadow-blue-950/30">
+          <div className="space-y-2">
+            <p className="text-xs uppercase tracking-[0.18em] text-cyan-300 font-mono">Final review · demonstration only</p>
+            <h1 id="confirm-vote-title" className="text-2xl font-bold text-white">Review your selection</h1>
+            <p className="text-sm text-slate-400">The previous step was a scripted interface demo. It did not verify your identity or liveness.</p>
+          </div>
+          <div className="rounded-xl border border-slate-700 bg-slate-900/70 p-4 flex items-center gap-4">
+            <img src={selectedParty.logoUrl} alt="" className="w-12 h-12 rounded-lg object-cover" />
+            <div>
+              <p className="text-xs text-slate-400">Selected party</p>
+              <p className="font-semibold text-white">{selectedParty.name}</p>
+            </div>
+          </div>
+          <p className="text-xs leading-relaxed text-slate-400">Submitting creates one demo ballot for this account. This educational prototype is not a real election service or a certified secret-ballot system.</p>
+          {voteError && <p role="alert" className="text-sm text-rose-300">{voteError}</p>}
+          <button onClick={handleSubmitDemoVote} disabled={submittingVote} className="w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-sm font-semibold disabled:opacity-60">
+            {submittingVote ? "Submitting…" : "Submit Demonstration Vote"}
+          </button>
+          <button onClick={() => setVerificationMethod(null)} disabled={submittingVote} className="w-full py-2 text-sm text-slate-300 hover:text-white disabled:opacity-60">
+            Cancel and return to party selection
+          </button>
+        </section>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full space-y-8">
       {/* Header */}
@@ -188,7 +224,7 @@ export default function VotePage() {
         </div>
         <h1 className="text-3xl font-extrabold text-white">Select Political Party</h1>
         <p className="text-xs text-slate-400 max-w-xl leading-relaxed">
-          Please review the parties below. Clicking &apos;Select&apos; will open the confirmation dialog and simulated face-verification scanner.
+          Review and choose a party to continue to the simulated verification demo. Your selection is not submitted until you confirm on the next screen.
         </p>
       </div>
 
@@ -269,7 +305,7 @@ export default function VotePage() {
               disabled={submittingVote}
               className="px-6 py-2.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white rounded-xl text-xs font-semibold shadow-lg shadow-blue-600/30 flex items-center gap-2"
             >
-              <span>{submittingVote ? "Submitting..." : "Verify & Cast Ballot"}</span>
+              <span>Continue to demo verification</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>

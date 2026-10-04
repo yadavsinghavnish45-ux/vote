@@ -17,12 +17,9 @@ export function FaceScannerModal({ isOpen, onClose, onVerified, userName }: Face
   const [currentChallenge, setCurrentChallenge] = useState<"align" | "blink" | "turn" | "done">("align");
   const [challengeProgress, setChallengeProgress] = useState(0);
 
-  // Alternative Passphrase Verification State
-  const [passphrase, setPassphrase] = useState("");
-  const [altError, setAltError] = useState("");
-
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const challengeTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   // Cleanup video stream on unmount or close
   useEffect(() => {
@@ -41,12 +38,14 @@ export function FaceScannerModal({ isOpen, onClose, onVerified, userName }: Face
     }
   }, [isOpen]);
 
-  const stopCamera = () => {
+  function stopCamera() {
+    challengeTimersRef.current.forEach(clearTimeout);
+    challengeTimersRef.current = [];
     if (streamRef.current) {
       streamRef.current.getTracks().forEach((track) => track.stop());
       streamRef.current = null;
     }
-  };
+  }
 
   const startCamera = async () => {
     setCameraState("requesting");
@@ -78,35 +77,29 @@ export function FaceScannerModal({ isOpen, onClose, onVerified, userName }: Face
     setCurrentChallenge("align");
     setChallengeProgress(20);
 
-    setTimeout(() => {
+    challengeTimersRef.current.push(setTimeout(() => {
       setCurrentChallenge("blink");
       setChallengeProgress(55);
 
-      setTimeout(() => {
+      challengeTimersRef.current.push(setTimeout(() => {
         setCurrentChallenge("turn");
         setChallengeProgress(85);
 
-        setTimeout(() => {
+        challengeTimersRef.current.push(setTimeout(() => {
           setChallengeProgress(100);
           setCurrentChallenge("done");
           setCameraState("success");
 
-          setTimeout(() => {
+          challengeTimersRef.current.push(setTimeout(() => {
             stopCamera();
             onVerified("camera_simulated");
-          }, 1200);
-        }, 1500);
-      }, 1500);
-    }, 1500);
+          }, 1200));
+        }, 1500));
+      }, 1500));
+    }, 1500));
   };
 
-  const handleAlternativeVerify = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (passphrase.trim().length < 4) {
-      setAltError("Please enter your 4-digit demo verification PIN (e.g. 7721)");
-      return;
-    }
-    setAltError("");
+  const handleAlternativeVerify = () => {
     onVerified("alternative_passphrase");
   };
 
@@ -120,10 +113,10 @@ export function FaceScannerModal({ isOpen, onClose, onVerified, userName }: Face
           <div>
             <h3 className="text-lg font-bold text-white flex items-center gap-2">
               <ShieldCheck className="w-5 h-5 text-cyan-400" />
-              BIOVOTE Liveness Verification
+              BIOVOTE Demo Verification
             </h3>
             <p className="text-xs text-slate-400">
-              Simulated demonstration for voter: <span className="text-cyan-300 font-mono">{userName}</span>
+              No identity or liveness check is performed. Account: <span className="text-cyan-300 font-mono">{userName}</span>
             </p>
           </div>
           <button
@@ -137,10 +130,7 @@ export function FaceScannerModal({ isOpen, onClose, onVerified, userName }: Face
         {/* Tab selection */}
         <div className="flex border-b border-slate-800 my-4">
           <button
-            onClick={() => {
-              setActiveTab("camera");
-              if (cameraState === "idle") startCamera();
-            }}
+              onClick={() => setActiveTab("camera")}
             className={`flex-1 pb-2.5 text-xs font-semibold flex items-center justify-center gap-2 border-b-2 transition-all ${
               activeTab === "camera"
                 ? "border-cyan-400 text-cyan-400"
@@ -148,7 +138,7 @@ export function FaceScannerModal({ isOpen, onClose, onVerified, userName }: Face
             }`}
           >
             <Camera className="w-4 h-4" />
-            Camera Face Verification
+            Optional Camera Preview
           </button>
           <button
             onClick={() => {
@@ -162,11 +152,11 @@ export function FaceScannerModal({ isOpen, onClose, onVerified, userName }: Face
             }`}
           >
             <KeyRound className="w-4 h-4" />
-            Accessible Alternative (PIN)
+            Continue Without Camera
           </button>
         </div>
 
-        {/* Camera Face Verification Tab Content */}
+        {/* Optional camera preview; timed prompts are simulated. */}
         {activeTab === "camera" && (
           <div className="space-y-4">
             <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-slate-950 border border-slate-800 flex items-center justify-center">
@@ -176,7 +166,7 @@ export function FaceScannerModal({ isOpen, onClose, onVerified, userName }: Face
                     <Camera className="w-6 h-6" />
                   </div>
                   <p className="text-xs text-slate-300 max-w-sm">
-                    Click below to initiate the local camera test. Frames are processed solely inside your browser and are never saved or uploaded.
+                    The camera is optional and only displays a live preview in your browser. BIOVOTE does not analyze, capture, or upload camera frames. The prompts below are simulated.
                   </p>
                   <button
                     onClick={startCamera}
@@ -225,7 +215,7 @@ export function FaceScannerModal({ isOpen, onClose, onVerified, userName }: Face
                       {currentChallenge === "align" && "Challenge 1: Center your face in frame..."}
                       {currentChallenge === "blink" && "Challenge 2: Blink naturally..."}
                       {currentChallenge === "turn" && "Challenge 3: Nod or tilt head slightly..."}
-                      {currentChallenge === "done" && "Biometric Liveness Confirmed!"}
+                      {currentChallenge === "done" && "Demo prompts complete — no identity check performed"}
                     </span>
                   </div>
                 </div>
@@ -235,8 +225,8 @@ export function FaceScannerModal({ isOpen, onClose, onVerified, userName }: Face
               {cameraState === "success" && (
                 <div className="absolute inset-0 bg-blue-950/80 backdrop-blur-sm flex flex-col items-center justify-center text-center p-4">
                   <CheckCircle2 className="w-14 h-14 text-emerald-400 animate-in zoom-in-75 duration-300" />
-                  <h4 className="mt-3 text-base font-bold text-white">Demonstration Face Check Passed</h4>
-                  <p className="text-xs text-slate-300 mt-1">Preparing final demonstration ballot...</p>
+                  <h4 className="mt-3 text-base font-bold text-white">Camera Demo Complete</h4>
+                  <p className="text-xs text-slate-300 mt-1">This did not verify identity or liveness.</p>
                 </div>
               )}
 
@@ -249,7 +239,7 @@ export function FaceScannerModal({ isOpen, onClose, onVerified, userName }: Face
                     onClick={() => setActiveTab("alternative")}
                     className="px-3.5 py-1.5 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-xs font-medium"
                   >
-                    Switch to Demo PIN Method
+                    Continue Without Camera
                   </button>
                 </div>
               )}
@@ -259,7 +249,7 @@ export function FaceScannerModal({ isOpen, onClose, onVerified, userName }: Face
             {(cameraState === "scanning" || cameraState === "success") && (
               <div className="space-y-1">
                 <div className="flex justify-between text-[11px] text-slate-400 font-mono">
-                  <span>Simulated Match Confidence</span>
+                  <span>Simulated Prompt Progress</span>
                   <span className="text-cyan-400">{challengeProgress}%</span>
                 </div>
                 <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
@@ -274,44 +264,30 @@ export function FaceScannerModal({ isOpen, onClose, onVerified, userName }: Face
             <div className="p-3 bg-slate-900/60 rounded-xl border border-slate-800 text-[11px] text-slate-400 flex items-start gap-2">
               <ShieldCheck className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
               <span>
-                <strong>Privacy Notice:</strong> BIOVOTE utilizes browser-based canvas analysis for this demo. Zero frames or biometric templates are stored or sent over the network.
+                <strong>Camera notice:</strong> This is a live preview only. No frame analysis or face matching occurs, and camera imagery is not uploaded by this feature.
               </span>
             </div>
           </div>
         )}
 
-        {/* Accessible Alternative PIN Verification Tab */}
+        {/* Accessible non-camera demo path */}
         {activeTab === "alternative" && (
-          <form onSubmit={handleAlternativeVerify} className="space-y-4">
+          <div className="space-y-4">
             <div className="p-4 bg-purple-950/20 border border-purple-800/40 rounded-xl text-xs text-purple-200">
               <p className="font-semibold mb-1">Accessible Non-Biometric Alternative</p>
               <p className="text-purple-300/80 leading-relaxed">
-                If you do not have a webcam or choose not to use camera detection, you can enter any 4-digit confirmation demo code (e.g. <strong>7721</strong>) to complete this demonstration vote.
+                You can continue without a camera. This advances the interface simulation only and does not verify your identity.
               </p>
             </div>
 
-            <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1.5">
-                Demo Verification Code (PIN)
-              </label>
-              <input
-                type="text"
-                maxLength={6}
-                value={passphrase}
-                onChange={(e) => setPassphrase(e.target.value)}
-                placeholder="7721"
-                className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white text-center font-mono tracking-widest text-lg focus:outline-none focus:border-purple-400"
-              />
-              {altError && <p className="text-rose-400 text-xs mt-1">{altError}</p>}
-            </div>
-
             <button
-              type="submit"
+              type="button"
+              onClick={handleAlternativeVerify}
               className="w-full py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-xl text-xs font-semibold shadow-lg shadow-purple-900/20 transition-all"
             >
-              Verify & Proceed to Ballot Submission
+              Continue without camera
             </button>
-          </form>
+          </div>
         )}
       </div>
     </div>

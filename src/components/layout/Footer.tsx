@@ -18,7 +18,7 @@ export function Footer() {
               <span className="font-bold text-lg text-white tracking-tight">BIOVOTE</span>
             </div>
             <p className="text-xs text-slate-400 leading-relaxed">
-              An educational demonstration platform exploring the intersection of browser-side biometric simulation and democratic voting integrity.
+              An educational prototype for exploring account flows, voting interfaces, and accessible simulated verification.
             </p>
             <div className="text-[11px] text-cyan-400/90 font-mono">
               &quot;Your Identity. Your Voice. Your Vote.&quot;
@@ -62,10 +62,10 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-1.5 text-slate-400">
                 <ShieldAlert className="w-3.5 h-3.5 text-cyan-400" />
-                <span>Zero Biometric Storage</span>
+                <span>No Face Matching</span>
               </li>
               <li className="text-slate-400">Prisma ORM with SQLite / Postgres</li>
-              <li className="text-slate-400">Decoupled Anonymous Ballot Architecture</li>
+              <li className="text-slate-400">Separate demonstration records</li>
             </ul>
           </div>
 
@@ -76,7 +76,7 @@ export function Footer() {
               <span>Demonstration Prototype</span>
             </div>
             <p className="text-[11px] text-slate-400 leading-relaxed">
-              This prototype is built strictly for academic presentation and design demonstration. It does not store biometric embeddings or constitute a certified public election system.
+              BIOVOTE is for academic demonstration only. Its camera prompts do not verify identity or liveness, and its data model is not certified for secret ballots or real elections.
             </p>
           </div>
         </div>
@@ -85,7 +85,7 @@ export function Footer() {
         <div className="border-t border-slate-800/60 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-4">
           <p>© {new Date().getFullYear()} BIOVOTE. Academic Research & Demonstration Prototype.</p>
           <div className="flex items-center gap-1 text-slate-400">
-            <span>Built with precision for next-generation civil engineering</span>
+            <span>Built for learning and demonstration</span>
           </div>
         </div>
       </div>

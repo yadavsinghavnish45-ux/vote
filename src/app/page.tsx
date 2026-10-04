@@ -31,17 +31,17 @@ export default function HomePage() {
           {/* Title & Tagline */}
           <div className="space-y-4 max-w-4xl mx-auto">
             <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white leading-tight">
-              <span>Next-Gen Biometric</span>
+              <span>Next-Gen Voting</span>
               <br />
               <span className="bg-gradient-to-r from-blue-400 via-cyan-300 to-indigo-400 bg-clip-text text-transparent">
-                Voting Demonstration
+                Prototype
               </span>
             </h1>
             <p className="text-lg sm:text-xl text-slate-300 font-light max-w-2xl mx-auto leading-relaxed">
               &quot;Your Identity. Your Voice. Your Vote.&quot;
             </p>
             <p className="text-sm text-slate-400 max-w-xl mx-auto">
-              BIOVOTE demonstrates how client-side face verification and cryptographic ballot decoupling can preserve both 1-person-1-vote integrity and complete secret ballot privacy.
+              Explore a carefully designed voting journey, from account registration to a simulated verification step and one demonstration ballot. This academic prototype does not verify identity or certify ballot secrecy.
             </p>
           </div>
 
@@ -74,20 +74,20 @@ export default function HomePage() {
           {/* Metric Badges */}
           <div className="pt-10 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto text-left">
             <div className="p-4 rounded-xl border border-slate-800 bg-slate-900/40 backdrop-blur-sm">
-              <div className="text-cyan-400 font-mono text-xl font-bold">100%</div>
-              <div className="text-xs text-slate-400 mt-1">Client-Side Verification</div>
+              <div className="text-cyan-400 font-mono text-xl font-bold">Optional</div>
+              <div className="text-xs text-slate-400 mt-1">Camera Demonstration</div>
             </div>
             <div className="p-4 rounded-xl border border-slate-800 bg-slate-900/40 backdrop-blur-sm">
-              <div className="text-blue-400 font-mono text-xl font-bold">0 Raw</div>
-              <div className="text-xs text-slate-400 mt-1">Biometrics Stored</div>
+              <div className="text-blue-400 font-mono text-xl font-bold">Local</div>
+              <div className="text-xs text-slate-400 mt-1">Camera Preview Only</div>
             </div>
             <div className="p-4 rounded-xl border border-slate-800 bg-slate-900/40 backdrop-blur-sm">
-              <div className="text-emerald-400 font-mono text-xl font-bold">1-to-1</div>
-              <div className="text-xs text-slate-400 mt-1">Single Vote Constraint</div>
+              <div className="text-emerald-400 font-mono text-xl font-bold">1 demo</div>
+              <div className="text-xs text-slate-400 mt-1">Ballot Per Account</div>
             </div>
             <div className="p-4 rounded-xl border border-slate-800 bg-slate-900/40 backdrop-blur-sm">
-              <div className="text-purple-400 font-mono text-xl font-bold">Zero-Leak</div>
-              <div className="text-xs text-slate-400 mt-1">Decoupled Ballots</div>
+              <div className="text-purple-400 font-mono text-xl font-bold">Separate</div>
+              <div className="text-xs text-slate-400 mt-1">Identity & Demo Ballot Records</div>
             </div>
           </div>
         </div>
@@ -100,7 +100,7 @@ export default function HomePage() {
             <h2 className="text-xs uppercase tracking-widest font-mono text-cyan-400">Workflow</h2>
             <p className="text-3xl font-extrabold text-white">How BIOVOTE Operates</p>
             <p className="text-sm text-slate-400">
-              A frictionless 4-step prototype demonstrating verifiable integrity from identity verification to secret ballot casting.
+              A four-step walkthrough of a voting interface. The checks here are for demonstration only.
             </p>
           </div>
 
@@ -132,9 +132,9 @@ export default function HomePage() {
               <div className="w-10 h-10 rounded-xl bg-purple-950 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold">
                 3
               </div>
-              <h3 className="text-base font-bold text-white">Simulated Liveness</h3>
+              <h3 className="text-base font-bold text-white">Optional Camera Preview</h3>
               <p className="text-xs text-slate-400 leading-relaxed">
-                Experience the futuristic camera face-detection HUD with simulated blink & head-tilt checks or an accessible PIN.
+                Preview a camera interface with timed visual prompts, or continue with the accessible non-camera demo path. Neither method checks identity or liveness.
               </p>
             </div>
 
@@ -159,32 +159,32 @@ export default function HomePage() {
             <h2 className="text-xs uppercase tracking-widest font-mono text-cyan-400">Privacy By Design</h2>
             <p className="text-3xl font-extrabold text-white">Engineered For Democratic Trust</p>
             <p className="text-sm text-slate-400">
-              How BIOVOTE addresses the classic dilemma between biometric voter verification and secret ballot anonymity.
+              A transparent look at what this prototype does and what it does not establish.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="p-6 rounded-2xl border border-slate-800 bg-slate-900/30 space-y-3">
               <ServerOff className="w-8 h-8 text-rose-400" />
-              <h3 className="text-lg font-bold text-white">Zero Server-Side Biometrics</h3>
+              <h3 className="text-lg font-bold text-white">No Biometric Matching</h3>
               <p className="text-xs text-slate-400 leading-relaxed">
-                Raw camera frames never leave the user&apos;s browser. The system performs simulated movement detection locally via HTML5 canvas and discards every frame instantaneously.
+                Camera access is optional and used only to show a live preview in your browser. BIOVOTE does not analyze frames, create face templates, or send camera imagery to its server.
               </p>
             </div>
 
             <div className="p-6 rounded-2xl border border-slate-800 bg-slate-900/30 space-y-3">
               <Lock className="w-8 h-8 text-cyan-400" />
-              <h3 className="text-lg font-bold text-white">Decoupled Anonymous Ballots</h3>
+              <h3 className="text-lg font-bold text-white">Separated Demo Records</h3>
               <p className="text-xs text-slate-400 leading-relaxed">
-                The database stores a receipt proving <span className="text-slate-200">User X voted</span>, and separately records <span className="text-slate-200">Party Y received a vote</span>, with no join table or foreign key between them.
+                Account participation receipts and party vote counts are stored in separate records. This prototype is not independently audited or certified for secret-ballot privacy.
               </p>
             </div>
 
             <div className="p-6 rounded-2xl border border-slate-800 bg-slate-900/30 space-y-3">
               <ShieldCheck className="w-8 h-8 text-emerald-400" />
-              <h3 className="text-lg font-bold text-white">Atomic Double-Voting Guard</h3>
+              <h3 className="text-lg font-bold text-white">One Demo Ballot Per Account</h3>
               <p className="text-xs text-slate-400 leading-relaxed">
-                Prisma database transactions combined with unique user constraints prevent race conditions and duplicate voting attempts across browser tabs and automated scripts.
+                A unique account receipt and server-side database transaction enforce the prototype&apos;s one-ballot-per-account rule.
               </p>
             </div>
           </div>

@@ -351,7 +351,7 @@ export default function AdminDashboardPage() {
               />
             </div>
             <div className="text-xs text-slate-400">
-              Note: Voter choices are decoupled & completely hidden from admin records.
+              Party counts and account participation are stored separately. This prototype is not independently audited for ballot privacy.
             </div>
           </div>
 

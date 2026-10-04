@@ -117,7 +117,7 @@ export default function VoterDashboardPage() {
           </p>
         </div>
 
-        {/* Card 2: Biometric Liveness Policy */}
+        {/* Card 2: Optional camera demonstration */}
         <div className="p-6 rounded-2xl border border-slate-800 bg-[#0b101b] space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
@@ -127,7 +127,7 @@ export default function VoterDashboardPage() {
           </div>
           <div className="text-xl font-bold text-white">Local Simulation</div>
           <p className="text-xs text-slate-400 leading-relaxed">
-            Camera frames run strictly on-device in your browser. Biometric templates are never retained.
+            Camera access is optional and only used for a local preview. There is no face matching or identity assurance.
           </p>
         </div>
 
@@ -159,13 +159,13 @@ export default function VoterDashboardPage() {
               Review political party manifestos and platform commitments on the ballot list.
             </li>
             <li>
-              When you choose a candidate, a simulated camera face-detection check will prompt you for blink / alignment liveness.
+              When you choose a party, you can view an optional camera preview with simulated prompts or continue without a camera. Neither path verifies identity or liveness.
             </li>
             <li>
-              An accessible Non-Biometric PIN option is always provided if camera access is unavailable.
+              An accessible non-camera path is always available.
             </li>
             <li>
-              Upon validation, your vote is recorded anonymously into the general ballot box.
+              After the demo prompts, your demonstration ballot is recorded. Identity receipts and party counts are separate records, but this prototype does not provide certified secret-ballot privacy.
             </li>
           </ol>
 

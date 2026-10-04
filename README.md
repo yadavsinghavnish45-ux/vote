@@ -1,7 +1,7 @@
 # BIOVOTE
 
 > **"Your Identity. Your Voice. Your Vote."**
-> A Futuristic, Secure Face-Detection Voting System (College-Level Educational Demonstration Prototype)
+> An educational voting interface prototype
 
 ![BIOVOTE Prototype](https://images.unsplash.com/photo-1540910419892-4a36d2c3266c?auto=format&fit=crop&w=1200&q=80)
 
@@ -9,28 +9,32 @@
 
 ## 🌟 Overview & Academic Scope
 
-**BIOVOTE** is a full-stack, demonstration web application exploring the intersection of client-side camera biometric liveness detection and cryptographic secret-ballot decoupling.
+**BIOVOTE** is a full-stack educational demonstration of registration, party selection, simulated verification, and one demo ballot per account. It is not a real election system.
 
 ### 🛡️ Critical Privacy & Ethical Boundaries
 - **Educational Prototype Only**: Clearly branded throughout the application.
-- **Zero Biometric Data Stored**: Camera frames are processed strictly in the browser using HTML5 Canvas. No biometric templates, vectors, or face embeddings are ever recorded or transmitted over the network.
-- **Accessible Alternative**: Includes a non-biometric demonstration verification method (PIN) for users without webcams or who decline camera permissions.
-- **Decoupled Ballot Box**: Prevents voter coercion and guarantees secret-ballot privacy by strictly segregating voter participation proofs (`DemoBallotReceipt`) from anonymized votes (`DemoBallot`).
+- **Optional Camera Preview**: Camera access is optional. The interface shows a local live preview and timed prompts; it does not analyze frames, detect faces, or verify identity or liveness.
+- **Accessible Alternative**: Users can continue through the simulated flow without camera access. This is not an identity check.
+- **Separate Demo Records**: Account participation receipts and aggregate party selections use separate records. This is not independently audited and does not guarantee secret-ballot privacy.
 - **Single Vote Constraint**: Enforced at the database transaction layer via unique constraints.
 
 ---
 
 ## 🚀 Tech Stack
 
-- **Frontend**: Next.js 15+ (App Router), React 19, TypeScript
+- **Frontend**: Next.js App Router, React 19, TypeScript
 - **Styling & UI**: Tailwind CSS, Framer Motion, Lucide Icons
 - **Database & ORM**: SQLite via Prisma ORM (designed with PostgreSQL migration parity)
-- **Security**: PBKDF2 with SHA-512 password hashing, HttpOnly Strict SameSite session cookies, Zod schema validation
+- **Security**: PBKDF2 with SHA-512 password hashing, HttpOnly SameSite session cookies, Zod schema validation
 - **Testing**: Vitest unit test suite
 
 ---
 
 ## 🛠️ Local macOS Quick Start
+
+## Important limitations
+
+BIOVOTE is a college-level demonstration only. It must not be used for a real election or to make identity decisions. Camera prompts are scripted and do not respond to facial movement. The database keeps account participation receipts separate from party vote counts, but the overall application is not a certified or independently audited secret-ballot system. Camera permission is optional; the camera preview does not capture or upload images.
 
 ### 1. Requirements
 - Node.js 18+ (tested on Node v24)
@@ -76,16 +80,16 @@ Visit **[http://localhost:3000](http://localhost:3000)** in your browser.
 ### 🗳️ Voter Portal
 - **Registration (`/register`):** Multi-step wizard with personal details, profile picture preview, and 6-digit email OTP (auto-populated in local sandbox mode).
 - **Voter Desk (`/dashboard`):** Real-time eligibility card, verification mode status, and cryptographic ballot token lookup.
-- **Ballot Selection (`/vote`):** Interactive political party cards with camera HUD liveness simulation & accessible PIN option.
+- **Ballot Selection (`/vote`):** Interactive party cards with optional camera preview, simulated timed prompts, and a non-camera alternative.
 
 ---
 
-## 🧪 Testing
+## 🧪 Checks
 
-To run the cryptographic security and token test suite:
+The repository currently does not include Vitest or Playwright in its installed dependencies. Type-check the application and run ESLint with:
 ```bash
-npm test
-# or: npx vitest run src/lib/auth/password.test.ts
+npx tsc --noEmit
+npm run lint
 ```
 
 To run a production build verification:

@@ -42,7 +42,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: "Selected political party is invalid or inactive." }, { status: 400 });
     }
 
-    // Atomic transaction enforcing 1-person-1-vote and ballot anonymity
+    // Atomic transaction enforces one demo ballot per account. Separate records
+    // reduce direct identity-to-party linkage but do not certify ballot secrecy.
     const receiptNumber = generateReceiptNumber(session.userId);
 
     const voteSubmission = await prisma.$transaction(async (tx) => {
@@ -63,7 +64,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         },
       });
 
-      // 3. Record anonymous ballot (linked to party, but has NO userId)
+      // 3. Record aggregate party selection separately (no userId foreign key).
       await tx.demoBallot.create({
         data: {
           partyId: party.id,
