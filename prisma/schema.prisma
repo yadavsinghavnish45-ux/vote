@@ -1,0 +1,84 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id              String                   @id @default(uuid())
+  name            String
+  username        String                   @unique
+  email           String                   @unique
+  passwordHash    String
+  role            String                   @default("USER") // "USER" | "ADMIN"
+  avatarUrl       String?
+  emailVerified   Boolean                  @default(false)
+  isSuspended     Boolean                  @default(false)
+  createdAt       DateTime                 @default(now())
+  updatedAt       DateTime                 @updatedAt
+  
+  sessions        Session[]
+  emailTokens     EmailVerificationToken[]
+  ballotReceipt   DemoBallotReceipt?
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model EmailVerificationToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  code      String   // 6-digit verification code
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model Party {
+  id          String       @id @default(uuid())
+  name        String       @unique
+  code        String       @unique
+  description String
+  logoUrl     String
+  isActive    Boolean      @default(true)
+  color       String       @default("#3b82f6")
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  votes       DemoBallot[]
+}
+
+// 1-vote constraint record linked to user without revealing their party selection
+model DemoBallotReceipt {
+  id            String   @id @default(uuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  receiptNumber String   @unique // Cryptographic demo hash
+  votedAt       DateTime @default(now())
+}
+
+// Decoupled ballot vote count: aggregate selection without identity linkage
+model DemoBallot {
+  id        String   @id @default(uuid())
+  partyId   String
+  party     Party    @relation(fields: [partyId], references: [id], onDelete: Cascade)
+  castAt    DateTime @default(now())
+}
+
+model AdminAuditLog {
+  id        String   @id @default(uuid())
+  adminId   String
+  adminName String
+  action    String
+  details   String
+  createdAt DateTime @default(now())
+}
